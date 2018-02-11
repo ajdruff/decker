@@ -1,0 +1,37 @@
+version: '2.1'
+
+##########################################
+#
+# Demo - Docker Deck Skel Sample Project
+# MySQL
+#
+#
+# Author: Andrew Druffner
+###########################################
+
+# Notes on this example:
+# No custom container name used
+
+services:
+   mysql_service:
+    # container_name: basic_container_demo
+    image: mysql:5.7    
+    #entrypoint: /usr/local/bin/docker-deck/entrypoint.sh    
+    #ports:
+    #- ${MYSQL_PORT}:3306   
+    #command: /usr/local/bin/docker-deck/command.sh
+
+    env_file: 
+        - docker/mysql.env
+    #additional container environmental variables not contained in env_file
+    environment:
+    - MYSQL_VAR="123"
+    - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-DefaultPassword} 
+
+    volumes: 
+    - ${MYSQL_DATA_PATH:-mysql_data}:/var/lib/mysql
+
+
+    restart: "no"
+volumes: 
+     mysql_data:

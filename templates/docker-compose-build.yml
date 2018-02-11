@@ -1,0 +1,53 @@
+version: '2.1'
+#must be at least 2.1 to recognize default format {VAR:-default}
+#http://github.com/ajdruff/docker-deck-pdns
+#docker-compose up
+############variable substitution########
+#To set the variables within this file, edit .env or set using a shell script before running docker-compose.yml
+############container environmental variables########
+#(equivilent to docker run -e VARIABLE=VALUE)
+#To set environmental variables in a service container,
+#create a file service_name.env and place in the docker directory
+#add an env_file definition under the service:
+     #env_file:
+     #    - docker/service-name.env
+#alternately, you can simply use the 'environment' tag and assign values that are set in the .env file
+
+#The  variable values that you see in this file  ,e.g: ${VAR_NAME} , are set in the local .env file
+#variables (as opposed to variable values) that are set in this file are valid only within the container they associated with
+#BUILD_VAR1 is only seen by the build script and not the containier
+#MYSERVICE_ENV1 is only seen by the container 'myservice'
+
+#
+
+services:
+   %SERVICE_NAME%:
+    container_name: %CONTAINER_NAME%
+    image: %IMAGE_NAME%
+
+    build:
+     context: docker/_build     #relative path of your Dockerfile directory
+     args:  
+           BUILD_VAR1: ${BUILD_VAR1}
+           BUILD_VAR2: ${BUILD_VAR2}
+           INSTALL_NANO: ${INSTALL_NANO}        
+    entrypoint: /usr/local/bin/docker-deck/entrypoint.sh       
+    command: /usr/local/bin/docker-deck/command.sh
+
+    env_file: 
+        - %CONTAINER_ENV_FILE% 
+    #additional container environmental variables not contained in env_file
+    environment:
+    - MYSERVICE_VAR="123"
+    - MYSERVICE_PASSWORD=${MY_PASSWORD:-DefaultPassword} 
+
+    volumes: 
+    - ${MYSERVICE_VOLUME:-myservice_volume}:/etc/myservice
+
+     ports:
+        - ${MYSERVICE_PORT}:3306
+
+    restart: no
+volumes: 
+     myservice_data:
+     myservice_assets:
