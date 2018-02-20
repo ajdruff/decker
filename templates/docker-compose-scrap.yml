@@ -1,0 +1,13 @@
+  db:
+    image: mysql
+    environment:
+    - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-DefaultPassword} #use the value from the myservice.env file ${MYSQL_ROOT_PASSWORD}. the word 'DefaultPassword' will be used as default if not set.
+    ports: #
+    - ${MYSQL_PORT:-3606}:3606   #takes value from mysql.env file
+#examples of other port formats
+#    - "53:53"     # external port:internal port tcp
+#    - "53:53/udp" # external port:internal port udp  
+    volumes:
+    - ${MYSQL_VOL:-mysql_volume}:/var/lib/mysql
+    
+#default persistent volumes. No value should be assigned since they will be automatically generated on the container host.Comment out if you are using your own local directories, for example, mapped to a shared VirtualBox folder.   
