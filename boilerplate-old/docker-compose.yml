@@ -1,0 +1,56 @@
+version: '2.1'
+#must be at least 2.1 to recognize default format {VAR:-default}
+#http://github.com/ajdruff/docker-deck-pdns
+#docker-compose up
+############variable substitution########
+#To set the variables within this file, edit .env or set using a shell script before running docker-compose.yml
+############container environmental variables########
+#(equivilent to docker run -e VARIABLE=VALUE)
+#To set environmental variables in a service container,
+#create a file service_name.env and place in the docker directory
+#add an env_file definition under the service:
+     #env_file:
+     #    - docker/service-name.env
+#alternately, you can simply use the 'environment' tag and assign values that are set in the .env file
+
+#The  variable values that you see in this file  ,e.g: ${VAR_NAME} , are set in the local .env file
+#variables (as opposed to variable values) that are set in this file are valid only within the container they associated with
+#BUILD_VAR1 is only seen by the build script and not the containier
+#MYSERVICE_ENV1 is only seen by the container 'myservice'
+
+#
+
+services:
+  #service name, can be anything you want    
+  myservice:
+# custom name - usage prevents scaling beyond one container
+#    container_name: mycontainer
+#image name - if build is used, then names the build. otherwise, uses it as a base image.
+    image: ajdruff/ddskel
+#uncomment build and comment out image if    using Dockerfile.
+    build:
+     #relative path of your Dockerfile directory
+     context: docker/_build
+     args:  #arguments available for build.
+           BUILD_VAR1: ${BUILD_VAR1}
+           BUILD_VAR2: ${BUILD_VAR2}
+           INSTALL_NANO: ${INSTALL_NANO}
+# container environmental variables contained in separate file     
+    env_file: 
+        - docker/myservice.env  
+#uncomment to override image command with custom entrypoint
+#    entrypoint: /usr/local/bin/docker-deck/entrypoint.sh       
+# uncomment to override image command with custom command script
+#    command: /usr/local/bin/docker-deck/command.sh
+#additional container environmental variables not contained in env_file
+#assign value $VAR1 set in .env file or use "hello" as default
+    environment:
+    - MYSERVICE_ENV2="This environmental variable comes from the docker-compose.yml myservice:environment section"
+#use the value from the myservice.env file ${MYSQL_ROOT_PASSWORD}. the word 'DefaultPassword' will be used as default if not set.  
+    - MYSERVICE_MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-DefaultPassword} 
+    volumes:
+#map internal /etc/myservice path to service_vol or value in ${SERVICE_VOLUME} set in .env   
+    - ${MYSERVICE_VOLUME:-myservice_volume}:/etc/mysevice
+volumes: 
+     myservice_volume:
+     mysql_volume:             

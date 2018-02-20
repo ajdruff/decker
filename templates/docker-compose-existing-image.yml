@@ -40,7 +40,7 @@ services:
      ports:
         - ${MYSERVICE_PORT}:3306
 
-    restart: no
+    restart: "no"
 volumes: 
      myservice_data:
      myservice_assets:

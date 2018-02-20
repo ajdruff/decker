@@ -19,28 +19,26 @@ version: '2.1'
 #MYSERVICE_ENV1 is only seen by the container 'myservice'
 
 #
+
 services:
-    %SERVICE_NAME%:
-        container_name: %CONTAINER_NAME%
-        image: %IMAGE_NAME%
+    nano:
+        container_name: nano_demo
+        image: mybuild/nano
         build:
-            context: .docker/%SERVICE_NAME%
+            context: .docker/nano     #relative path of your Dockerfile directory
             args:  
                 BUILD_VAR1: ${BUILD_VAR1}
                 BUILD_VAR2: ${BUILD_VAR2}
-                INSTALL_NANO: ${INSTALL_NANO}
-        #command: /usr/local/bin/docker-deck/command.sh
-        entrypoint: /usr/local/bin/docker-deck/entrypoint.sh       
+                INSTALL_NANO: ${INSTALL_NANO}  
         env_file: 
-            - .docker/%SERVICE_NAME%/%SERVICE_NAME%.env
+            - .docker/nano/nano.env
         #additional container environmental variables not contained in env_file
         environment:
-            - DEBIAN_VAR="123"
-            - DEBIAN_VAR2=${VAR2:-1234} 
+            - VAR="123"
         volumes: 
-            - ${MYSERVICE_VOLUME:-myservice_data}:/etc/myservice
-        ports:
-           - ${MYSERVICE_PORT}:3306
+            - ${NANO_VOLUME:-nano_data}:/etc/myservice
+            #ports:
+            #   - ${MYSERVICE_PORT}:3306
         restart: "no"
 volumes: 
-     myservice_data:
+     nano_data:

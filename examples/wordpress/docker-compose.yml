@@ -21,30 +21,47 @@ version: '2.1'
 #
 
 services:
-   debian:
-    container_name:nano_demo
-    image: mybuild/debian
-
-    build:
-     context: .docker/build     #relative path of your Dockerfile directory
-     args:  
-           INSTALL_NANO: ${INSTALL_NANO}    
+   mysql:
+    container_name: example.com_mysql
+    image: mysql:5.7   
     #entrypoint: /usr/local/bin/docker-deck/entrypoint.sh       
     #command: /usr/local/bin/docker-deck/command.sh
 
     env_file: 
-        - .docker/debian.env
+        - .docker/mysql/mysql.env 
     #additional container environmental variables not contained in env_file
     environment:
-    - DEBIAN_VAR="123"
-    - DEBIAN_VAR2=${VAR2:-1234} 
-
+        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+        MYSQL_DATABASE: ${WORDPRESS_DB_NAME}
+        MYSQL_USER: ${WORDPRESS_DB_USER}
+        MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD}
     volumes: 
-    - ${DEBIAN_VOLUME:-debian_data}:/etc/myservice
+    - ${DB_DATA_PATH:-mysql_data}:/var/lib/mysql
+    ports:
+        - ${MYSQL_PORT}:3306
+    restart: "no"
 
-     #ports:
-     #   - ${MYSERVICE_PORT}:3306
+   wordpress:
+    depends_on:
+      - mysql
+    container_name: example.com_wp
+    image: wordpress:latest    
+    #entrypoint: /usr/local/bin/docker-deck/entrypoint.sh       
+    #command: /usr/local/bin/docker-deck/command.sh
 
-    restart: no
+    env_file: 
+        - .docker/wordpress/wordpress.env
+    #additional container environmental variables not contained in env_file
+    environment:
+        WORDPRESS_DB_NAME: "${WORDPRESS_DB_NAME}"
+        WORDPRESS_DB_USER: "${WORDPRESS_DB_USER}"
+        WORDPRESS_DB_PASSWORD: "${WORDPRESS_DB_PASSWORD}"        
+    volumes:
+        - wp_html:/var/www/html
+    ports:
+        - ${WEBSERVER_PORT}:80
+
+    restart: "no"
 volumes: 
-     debian_data:
+     wp_html:
+     mysql_data:     
