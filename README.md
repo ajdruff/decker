@@ -1,13 +1,13 @@
 # Docker Decks
 
-Docker is a template to create your own [Docker](https://www.docker.com/what-docker) Deck.
+Decker is a template to create your own [Docker](https://www.docker.com/what-docker) Deck.
 
 For more information on what a Docker Deck is and how to use one, see the 'About Docker Decks' section in this readme.
 
 ## Quick Start
 
-    curl -L https://github.com/ajdruff/docker-deck-skel/archive/master.tar.gz | tar -zx
-    mv docker-deck-skel* docker-deck-MYDECK
+    curl -L https://github.com/ajdruff/decker/archive/master.tar.gz | tar -zx
+    mv decker* docker-deck-MYDECK
     cd docker-deck-MYDECK
     cp .env-sample .env
 
